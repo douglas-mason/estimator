@@ -1,6 +1,15 @@
 import React from "react";
 import { Button, Input, InputNumber, Form } from "antd";
-import { formContainerClass } from "./estimator-form.styles";
+import {
+  addTaskFormClass,
+  formContainerClass,
+  formClass,
+  modifyingFieldsContainer,
+  formSubmitContainer,
+  taskContainerClass,
+  taskListItemClass,
+  taskListItemContentClass,
+} from "./estimator-form.styles";
 
 const FormItem = Form.Item;
 
@@ -10,7 +19,7 @@ export class EstimatorForm extends React.Component {
     this.state = {
       tasks: [],
       totalEstimate: 0,
-      isLoaded: false
+      isLoaded: false,
     };
   }
 
@@ -23,7 +32,7 @@ export class EstimatorForm extends React.Component {
       const totalEstimate = totalTaskTime;
       this.setState({
         isLoaded: true,
-        totalEstimate
+        totalEstimate,
       });
     });
   };
@@ -35,73 +44,96 @@ export class EstimatorForm extends React.Component {
       console.log("values", values);
       const item = {
         name: values["taskName"],
-        estimate: values["taskEstimate"]
+        estimate: values["taskEstimate"],
       };
       this.setState(
         {
-          tasks: [...tasks, item]
+          tasks: [...tasks, item],
         },
         () =>
           form.setFieldsValue({
             taskName: "",
-            taskEstimate: undefined
+            taskEstimate: undefined,
           })
       );
     });
-  };
-
-  getTaskItems = () => {
-    const { tasks } = this.state;
-    return tasks.map(task => (
-      <li key={`${task.name + task.estimate}`}>
-        <span>{task.name}</span>
-        <span>{task.estimate}</span>
-      </li>
-    ));
   };
 
   render() {
     const { getFieldDecorator } = this.props.form;
     return (
       <div className={formContainerClass}>
-        <Form onSubmit={this.handleOnSubmit}>
-          <FormItem label="Percent of time testing">
-            {getFieldDecorator("percentTesting", {
-              rules: [{ type: "number", message: "Must be a number" }]
-            })(<InputNumber />)}
-          </FormItem>
-          <FormItem label="Percent of time working on bug fixes">
-            {getFieldDecorator("percentFixes", {
-              rules: [{ type: "number", message: "Must be a number" }]
-            })(<InputNumber />)}
-          </FormItem>
-          <FormItem label="Typical number of meeting hours per week">
-            {getFieldDecorator("meetingHours", {
-              rules: [{ type: "number", message: "Must be a number" }]
-            })(<InputNumber />)}
-          </FormItem>
-          <div>
-            <FormItem label="Task Name">
-              {getFieldDecorator("taskName", {})(<Input />)}
-            </FormItem>
-            <FormItem label="Task Estimate">
-              {getFieldDecorator("taskEstimate", {
-                rules: [{ type: "number", message: "Must be a number" }]
+        <Form
+          layout="inline"
+          onSubmit={this.handleOnSubmit}
+          className={formClass}
+        >
+          <div className={modifyingFieldsContainer}>
+            <FormItem label="Percent of time testing">
+              {getFieldDecorator("percentTesting", {
+                rules: [{ type: "number", message: "Must be a number" }],
               })(<InputNumber />)}
             </FormItem>
-            <Button htmlType='button' onClick={this.handleOnAddTaskClick}>Add Task</Button>
+            <FormItem label="Percent of time working on bug fixes">
+              {getFieldDecorator("percentFixes", {
+                rules: [{ type: "number", message: "Must be a number" }],
+              })(<InputNumber />)}
+            </FormItem>
+            <FormItem label="Typical number of meeting hours per week">
+              {getFieldDecorator("meetingHours", {
+                rules: [{ type: "number", message: "Must be a number" }],
+              })(<InputNumber />)}
+            </FormItem>
+            <div className={formSubmitContainer}>
+              <Button htmlType="submit">Calculate</Button>
+            </div>
           </div>
-          <div className="taskList">
-            <ul>{this.getTaskItems()}</ul>
-          </div>
-          <Button htmlType='submit'>Calculate</Button>
+          <TaskList
+            getFieldDecorator={getFieldDecorator}
+            tasks={this.state.tasks}
+            onAddTaskClick={this.handleOnAddTaskClick}
+          />
         </Form>
         <div className="estimateResult">
-          {this.state.isLoaded && <div>Estimate: {this.state.totalEstimate}</div>}
+          {this.state.isLoaded && (
+            <div>Estimate: {this.state.totalEstimate}</div>
+          )}
         </div>
       </div>
     );
   }
 }
+
+const TaskList = ({ tasks, getFieldDecorator, onAddTaskClick }) => {
+  const getTaskItems = tasks => {
+    return tasks.map(task => (
+      <li key={`${task.name + task.estimate}`} className={taskListItemClass}>
+        <span className={taskListItemContentClass}>{task.name}</span>
+        <span className={taskListItemContentClass}>{task.estimate}</span>
+      </li>
+    ));
+  };
+
+  return (
+    <div className={taskContainerClass}>
+      <div className={addTaskFormClass}>
+        <FormItem label="Task Name">
+          {getFieldDecorator("taskName", {})(<Input />)}
+        </FormItem>
+        <FormItem label="Task Estimate">
+          {getFieldDecorator("taskEstimate", {
+            rules: [{ type: "number", message: "Must be a number" }],
+          })(<InputNumber />)}
+        </FormItem>
+        <Button htmlType="button" onClick={onAddTaskClick}>
+          Add Task
+        </Button>
+      </div>
+      <div className="taskList">
+        <ul>{getTaskItems(tasks)}</ul>
+      </div>
+    </div>
+  );
+};
 
 export const WrappedEstimatorForm = Form.create()(EstimatorForm);
