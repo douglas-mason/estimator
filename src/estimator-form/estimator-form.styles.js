@@ -66,3 +66,8 @@ export const resultsGridClass = css`
 export const resultsHeaderClass = css`
   grid-area: result-header;
 `;
+
+export const linkButtonClass = css`
+  background-color: none;
+  border: none;
+`;
