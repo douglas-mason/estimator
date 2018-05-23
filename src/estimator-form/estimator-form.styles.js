@@ -2,6 +2,7 @@ import { css } from 'emotion';
 
 export const formContainerClass = css`
   margin: 0px auto;
+  width: 90%;
 `;
 
 export const formClass = css`
@@ -11,8 +12,9 @@ export const formClass = css`
 `;
 
 export const addTaskFormClass = css`
-  height: 80px;
+  min-height: 80px;
   display: flex;
+  flex-wrap: wrap;
   padding-bottom: 10px;
   border-bottom: 3px solid lightgray;
 `;
@@ -21,7 +23,7 @@ export const modifyingFieldsContainer = css`
   display: flex;
   flex-direction: column;
   align-items: flex-end;
-  margin-right: 100px;
+  margin: 10px;
 `;
 
 export const formSubmitContainer = css`
@@ -31,6 +33,7 @@ export const formSubmitContainer = css`
 export const taskContainerClass = css`
   padding: 10px;
   border: 1px solid #000;
+  margin: 10px;
 `;
 
 export const taskListItemClass = css`
@@ -62,6 +65,7 @@ export const resultsGridClass = css`
   grid-template-columns: 1fr 1fr 1fr 1fr;
   grid-template-rows: auto;
   grid-template-areas: 'result-header result-header result-header result-header ';
+  text-align: center;
 `;
 
 export const resultsHeaderClass = css`
@@ -78,4 +82,8 @@ export const clearAllButtonContainerClass = css`
   justify-content: flex-end;
   width: 100%;
   color: #779eff;
+`;
+
+export const taskNameInputClass = css`
+  width: 200px;
 `;

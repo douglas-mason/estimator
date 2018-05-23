@@ -15,6 +15,7 @@ import {
   resultsHeaderClass,
   linkButtonClass,
   clearAllButtonContainerClass,
+  taskNameInputClass,
 } from './estimator-form.styles';
 
 import { TaskService } from '../_shared/services/task.service';
@@ -32,6 +33,11 @@ const roundToDecimal = (number, decimal = 2) => {
   var factor = Math.pow(10, decimal);
   return Math.round(Number(number) * factor) / factor;
 };
+
+const estimateFormatter = value =>
+  Number(value) === 1 ? `${value} hour` : `${value} hours`;
+
+const estimateParser = value => value.replace(/\shours?/, '');
 
 export class EstimatorForm extends React.Component {
   constructor(props) {
@@ -184,32 +190,65 @@ export class EstimatorForm extends React.Component {
           onSubmit={this.handleOnSubmit}
           className={formClass}
         >
-          <div className={modifyingFieldsContainer}>
-            <FormItem label="Percent of time testing">
-              {getFieldDecorator('percentTesting', {
-                initialValue: DEFAULT_PERCENT_TESTING,
-                rules: [{ type: 'number', message: 'Must be a number' }],
-              })(<InputNumber />)}
-            </FormItem>
-            <FormItem label="Percent of time working on bug fixes">
-              {getFieldDecorator('percentFixes', {
-                initialValue: DEFAULT_PERCENT_FIXES,
-                rules: [{ type: 'number', message: 'Must be a number' }],
-              })(<InputNumber />)}
-            </FormItem>
-            <FormItem label="Typical number of meeting hours per week">
-              {getFieldDecorator('meetingHours', {
-                initialValue: DEFAULT_MEETING_HOURS,
-                rules: [{ type: 'number', message: 'Must be a number' }],
-              })(<InputNumber />)}
-            </FormItem>
-            <FormItem label="Sprint length (in days)">
-              {getFieldDecorator('sprintLength', {
-                initialValue: DEFAULT_SPRINT_LENGTH,
-                rules: [{ type: 'number', message: 'Must be a number' }],
-              })(<InputNumber />)}
-            </FormItem>
+          <div>
+            <div>
+              <div>
+                <label htmlFor="percentTesting">Percent of time testing</label>
+              </div>
+              <div>
+                <FormItem>
+                  {getFieldDecorator('percentTesting', {
+                    initialValue: DEFAULT_PERCENT_TESTING,
+                    rules: [{ type: 'number', message: 'Must be a number' }],
+                  })(<InputNumber />)}
+                </FormItem>
+              </div>
+            </div>
+            <div>
+              <div>
+                <label htmlFor="percentFixes">
+                  Percent of time working on bug fixes
+                </label>
+              </div>
+              <div>
+                <FormItem>
+                  {getFieldDecorator('percentFixes', {
+                    initialValue: DEFAULT_PERCENT_FIXES,
+                    rules: [{ type: 'number', message: 'Must be a number' }],
+                  })(<InputNumber />)}
+                </FormItem>
+              </div>
+            </div>
+            <div>
+              <div>
+                <label htmlFor="meetingHours">
+                  Typical number of meeting hours per week
+                </label>
+              </div>
+              <div>
+                <FormItem>
+                  {getFieldDecorator('meetingHours', {
+                    initialValue: DEFAULT_MEETING_HOURS,
+                    rules: [{ type: 'number', message: 'Must be a number' }],
+                  })(<InputNumber />)}
+                </FormItem>
+              </div>
+            </div>
+            <div>
+              <div>
+                <label htmlFor="sprintLength">Sprint length (in days)</label>
+              </div>
+              <div>
+                <FormItem>
+                  {getFieldDecorator('sprintLength', {
+                    initialValue: DEFAULT_SPRINT_LENGTH,
+                    rules: [{ type: 'number', message: 'Must be a number' }],
+                  })(<InputNumber />)}
+                </FormItem>
+              </div>
+            </div>
           </div>
+          <div className={modifyingFieldsContainer} />
           <TaskList
             getFieldDecorator={getFieldDecorator}
             tasks={this.state.tasks}
@@ -258,18 +297,30 @@ const TaskList = ({
   return (
     <div className={taskContainerClass}>
       <div className={addTaskFormClass}>
-        <FormItem label="Task Name">
+        <FormItem>
           {getFieldDecorator('taskName', {})(
-            <Input ref={input => (inputRef = input)} autoFocus />
+            <Input
+              placeholder="Task Name"
+              className={taskNameInputClass}
+              ref={input => (inputRef = input)}
+              autoFocus
+            />
           )}
         </FormItem>
-        <FormItem label="Task Estimate (in hours)">
+        <FormItem>
           {getFieldDecorator('taskEstimate', {
             initialValue: DEFAULT_TASK_ESTIMATE,
             rules: [{ type: 'number', message: 'Must be a number' }],
-          })(<InputNumber />)}
+          })(
+            <InputNumber
+              placeholder="Estimate"
+              formatter={estimateFormatter}
+              parser={estimateParser}
+            />
+          )}
         </FormItem>
         <Button
+          type="primary"
           htmlType="button"
           onClick={() => {
             onAddTaskClick();

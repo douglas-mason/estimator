@@ -4,7 +4,7 @@ export const logoContainerClass = css`
   color: '#fff';
   transform: scale(1.5);
   position: relative;
-  left: 100px;
+  left: 80px;
   top: -20px;
 `;
 
