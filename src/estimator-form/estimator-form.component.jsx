@@ -132,7 +132,6 @@ export class EstimatorForm extends React.Component {
 
   handleRemoveTask = indexToRemove => {
     const { tasks } = this.state;
-    const { form } = this.props;
     const updatedTasks = tasks.filter((t, index) => indexToRemove !== index);
     this.setState(
       {
@@ -140,19 +139,7 @@ export class EstimatorForm extends React.Component {
       },
       () => {
         this.taskService.remove(indexToRemove);
-
-        const values = form.getFieldsValue();
-        const percentFixes = values['percentFixes'];
-        const percentTesting = values['percentTesting'];
-        const meetingHours = values['meetingHours'];
-        const sprintLength = values['sprintLength'];
-
-        this.calculateEstimate(updatedTasks, {
-          percentFixes,
-          percentTesting,
-          meetingHours,
-          sprintLength,
-        });
+        this.calculateEstimate(updatedTasks, this.getModifierValues());
       }
     );
   };
@@ -181,6 +168,33 @@ export class EstimatorForm extends React.Component {
     });
   };
 
+  handleOnModifierChange = (field, value) => {
+    console.log(field, value);
+    const { tasks } = this.state;
+    let values = this.getModifierValues();
+    values = Object.assign(values, {
+      [field]: value,
+    });
+    this.calculateEstimate(tasks, values);
+  };
+
+  getModifierValues = () => {
+    const { form } = this.props;
+
+    const values = form.getFieldsValue();
+    const percentFixes = values['percentFixes'];
+    const percentTesting = values['percentTesting'];
+    const meetingHours = values['meetingHours'];
+    const sprintLength = values['sprintLength'];
+
+    return {
+      percentFixes,
+      percentTesting,
+      meetingHours,
+      sprintLength,
+    };
+  };
+
   render() {
     const { getFieldDecorator } = this.props.form;
     return (
@@ -198,6 +212,10 @@ export class EstimatorForm extends React.Component {
               <div>
                 <FormItem>
                   {getFieldDecorator('percentTesting', {
+                    onChange: this.handleOnModifierChange.bind(
+                      this,
+                      'percentTesting'
+                    ),
                     initialValue: DEFAULT_PERCENT_TESTING,
                     rules: [{ type: 'number', message: 'Must be a number' }],
                   })(<InputNumber />)}
@@ -213,6 +231,10 @@ export class EstimatorForm extends React.Component {
               <div>
                 <FormItem>
                   {getFieldDecorator('percentFixes', {
+                    onChange: this.handleOnModifierChange.bind(
+                      this,
+                      'percentFixes'
+                    ),
                     initialValue: DEFAULT_PERCENT_FIXES,
                     rules: [{ type: 'number', message: 'Must be a number' }],
                   })(<InputNumber />)}
@@ -228,6 +250,10 @@ export class EstimatorForm extends React.Component {
               <div>
                 <FormItem>
                   {getFieldDecorator('meetingHours', {
+                    onChange: this.handleOnModifierChange.bind(
+                      this,
+                      'meetingHours'
+                    ),
                     initialValue: DEFAULT_MEETING_HOURS,
                     rules: [{ type: 'number', message: 'Must be a number' }],
                   })(<InputNumber />)}
@@ -241,6 +267,10 @@ export class EstimatorForm extends React.Component {
               <div>
                 <FormItem>
                   {getFieldDecorator('sprintLength', {
+                    onChange: this.handleOnModifierChange.bind(
+                      this,
+                      'sprintLength'
+                    ),
                     initialValue: DEFAULT_SPRINT_LENGTH,
                     rules: [{ type: 'number', message: 'Must be a number' }],
                   })(<InputNumber />)}
