@@ -274,7 +274,11 @@ const TaskList = ({
         </Button>
       </div>
       <div className={clearAllButtonContainerClass}>
-        <button className={linkButtonClass} onClick={onClearAllClick}>
+        <button
+          type="button"
+          className={linkButtonClass}
+          onClick={onClearAllClick}
+        >
           Clear All
         </button>
       </div>
