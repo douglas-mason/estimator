@@ -114,12 +114,12 @@ export class EstimatorForm extends React.Component {
     const meetingHours = values['meetingHours'];
     const sprintLength = values['sprintLength'];
     let totalEstimate = totalTaskTime;
-    totalEstimate += totalEstimate * (percentFixes / 100);
     totalEstimate += totalEstimate * (percentTesting / 100);
-    totalEstimate += meetingHours;
+    totalEstimate += totalEstimate * (percentFixes / 100);
+    totalEstimate += totalEstimate / 40 * meetingHours;
     const totalDays = totalEstimate / 8;
     const totalWeeks = totalEstimate / 40;
-    const totalSprints = totalEstimate / sprintLength;
+    const totalSprints = totalDays / sprintLength;
     this.setState({
       isLoaded: true,
       tasks,
