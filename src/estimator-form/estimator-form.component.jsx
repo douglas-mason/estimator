@@ -27,6 +27,12 @@ const DEFAULT_MEETING_HOURS = 0;
 const DEFAULT_PERCENT_FIXES = 10;
 const DEFAULT_PERCENT_TESTING = 20;
 
+const roundToDecimal = (number, decimal = 2) => {
+  if (number === undefined) return undefined;
+  var factor = Math.pow(10, decimal);
+  return Math.round(Number(number) * factor) / factor;
+};
+
 export class EstimatorForm extends React.Component {
   constructor(props) {
     super(props);
@@ -291,10 +297,10 @@ const TaskList = ({
         <div>days</div>
         <div>weeks</div>
         <div>sprints</div>
-        <div>{totalEstimate}</div>
-        <div>{totalDays}</div>
-        <div>{totalWeeks}</div>
-        <div>{totalSprints}</div>
+        <div>{roundToDecimal(totalEstimate)}</div>
+        <div>{roundToDecimal(totalDays)}</div>
+        <div>{roundToDecimal(totalWeeks)}</div>
+        <div>{roundToDecimal(totalSprints)}</div>
       </div>
     </div>
   );
