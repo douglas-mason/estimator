@@ -69,6 +69,13 @@ export const resultsHeaderClass = css`
 `;
 
 export const linkButtonClass = css`
-  background-color: none;
+  background-color: transparent;
   border: none;
+`;
+
+export const clearAllButtonContainerClass = css`
+  display: flex;
+  justify-content: flex-end;
+  width: 100%;
+  color: #779eff;
 `;

@@ -27,4 +27,9 @@ export class TaskService {
     tasks.splice(taskIndex, 1);
     localStorage.setItem(TASK_STORAGE_KEY, JSON.stringify(tasks));
   }
+
+  removeAll() {
+    localStorage.setItem(TASK_STORAGE_KEY, '');
+    this.initializeTasks();
+  }
 }

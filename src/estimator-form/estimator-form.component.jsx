@@ -14,6 +14,7 @@ import {
   resultsGridClass,
   resultsHeaderClass,
   linkButtonClass,
+  clearAllButtonContainerClass,
 } from './estimator-form.styles';
 
 import { TaskService } from '../_shared/services/task.service';
@@ -144,6 +145,30 @@ export class EstimatorForm extends React.Component {
     );
   };
 
+  handleRemoveAllTasks = () => {
+    const updatedTasks = [];
+    this.setState(
+      {
+        tasks: [],
+      },
+      () => {
+        this.taskService.removeAll();
+        this.clearEstimates();
+      }
+    );
+  };
+
+  clearEstimates = () => {
+    this.setState({
+      isLoaded: false,
+      tasks: [],
+      totalEstimate: 0,
+      totalDays: 0,
+      totalWeeks: 0,
+      totalSprints: 0,
+    });
+  };
+
   render() {
     const { getFieldDecorator } = this.props.form;
     return (
@@ -184,6 +209,7 @@ export class EstimatorForm extends React.Component {
             tasks={this.state.tasks}
             onAddTaskClick={this.handleOnSubmit}
             onRemoveTaskClick={this.handleRemoveTask}
+            onClearAllClick={this.handleRemoveAllTasks}
             {...this.state}
           />
         </Form>
@@ -192,11 +218,13 @@ export class EstimatorForm extends React.Component {
   }
 }
 
+let inputRef;
 const TaskList = ({
   tasks,
   getFieldDecorator,
   onAddTaskClick,
   onRemoveTaskClick,
+  onClearAllClick,
   totalEstimate,
   totalDays,
   totalWeeks,
@@ -225,7 +253,9 @@ const TaskList = ({
     <div className={taskContainerClass}>
       <div className={addTaskFormClass}>
         <FormItem label="Task Name">
-          {getFieldDecorator('taskName', {})(<Input />)}
+          {getFieldDecorator('taskName', {})(
+            <Input ref={input => (inputRef = input)} autoFocus />
+          )}
         </FormItem>
         <FormItem label="Task Estimate (in hours)">
           {getFieldDecorator('taskEstimate', {
@@ -233,9 +263,20 @@ const TaskList = ({
             rules: [{ type: 'number', message: 'Must be a number' }],
           })(<InputNumber />)}
         </FormItem>
-        <Button htmlType="button" onClick={onAddTaskClick}>
+        <Button
+          htmlType="button"
+          onClick={() => {
+            onAddTaskClick();
+            inputRef && inputRef.focus();
+          }}
+        >
           Add Task
         </Button>
+      </div>
+      <div className={clearAllButtonContainerClass}>
+        <button className={linkButtonClass} onClick={onClearAllClick}>
+          Clear All
+        </button>
       </div>
       <div>
         <ul className={taskListClass}>{getTaskItems(tasks)}</ul>
