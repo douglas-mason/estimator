@@ -7,6 +7,7 @@ export const formContainerClass = css`
 export const formClass = css`
   display: flex;
   justify-content: center;
+  flex-wrap: wrap;
 `;
 
 export const addTaskFormClass = css`
