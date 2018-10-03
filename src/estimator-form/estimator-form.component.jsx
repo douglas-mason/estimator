@@ -1,43 +1,34 @@
 import React from 'react';
-import { Button, Input, InputNumber, Form } from 'antd';
+import { InputNumber, Form } from 'antd';
 import {
-  addTaskFormClass,
   formContainerClass,
   formClass,
   modifyingFieldsContainer,
   formSubmitContainer,
-  taskContainerClass,
-  taskListItemClass,
-  taskListItemContentClass,
-  taskListClass,
   estimateResultClass,
-  resultsGridClass,
-  resultsHeaderClass,
-  linkButtonClass,
-  clearAllButtonContainerClass,
-  taskNameInputClass,
 } from './estimator-form.styles';
 
 import { TaskService } from '../_shared/services/task.service';
+import { TaskList } from './task-list.component';
 
-const FormItem = Form.Item;
+export const FormItem = Form.Item;
 
-const DEFAULT_TASK_ESTIMATE = 1;
+export const DEFAULT_TASK_ESTIMATE = 1;
 const DEFAULT_SPRINT_LENGTH = 10;
 const DEFAULT_MEETING_HOURS = 0;
 const DEFAULT_PERCENT_FIXES = 10;
 const DEFAULT_PERCENT_TESTING = 20;
 
-const roundToDecimal = (number, decimal = 2) => {
+export const roundToDecimal = (number, decimal = 2) => {
   if (number === undefined) return undefined;
   var factor = Math.pow(10, decimal);
   return Math.round(Number(number) * factor) / factor;
 };
 
-const estimateFormatter = value =>
+export const estimateFormatter = value =>
   Number(value) === 1 ? `${value} hour` : `${value} hours`;
 
-const estimateParser = value => value.replace(/\shours?/, '');
+export const estimateParser = value => value.replace(/\shours?/, '');
 
 export class EstimatorForm extends React.Component {
   constructor(props) {
@@ -292,99 +283,5 @@ export class EstimatorForm extends React.Component {
     );
   }
 }
-
-let inputRef;
-const TaskList = ({
-  tasks,
-  getFieldDecorator,
-  onAddTaskClick,
-  onRemoveTaskClick,
-  onClearAllClick,
-  totalEstimate,
-  totalDays,
-  totalWeeks,
-  totalSprints,
-}) => {
-  const getTaskItems = tasks => {
-    return tasks.map((task, index) => (
-      <li
-        key={`${Math.random() * Math.floor(1000) + task.name}`}
-        className={taskListItemClass}
-      >
-        <span className={taskListItemContentClass}>{task.name}</span>
-        <span className={taskListItemContentClass}>{task.estimate}</span>
-        <button
-          className={linkButtonClass}
-          type="button"
-          onClick={onRemoveTaskClick.bind(this, index)}
-        >
-          x
-        </button>
-      </li>
-    ));
-  };
-
-  return (
-    <div className={taskContainerClass}>
-      <div className={addTaskFormClass}>
-        <FormItem>
-          {getFieldDecorator('taskName', {})(
-            <Input
-              placeholder="Task Name"
-              className={taskNameInputClass}
-              ref={input => (inputRef = input)}
-              autoFocus
-            />
-          )}
-        </FormItem>
-        <FormItem>
-          {getFieldDecorator('taskEstimate', {
-            initialValue: DEFAULT_TASK_ESTIMATE,
-            rules: [{ type: 'number', message: 'Must be a number' }],
-          })(
-            <InputNumber
-              placeholder="Estimate"
-              formatter={estimateFormatter}
-              parser={estimateParser}
-            />
-          )}
-        </FormItem>
-        <Button
-          type="primary"
-          htmlType="button"
-          onClick={() => {
-            onAddTaskClick();
-            inputRef && inputRef.focus();
-          }}
-        >
-          Add Task
-        </Button>
-      </div>
-      <div className={clearAllButtonContainerClass}>
-        <button
-          type="button"
-          className={linkButtonClass}
-          onClick={onClearAllClick}
-        >
-          Clear All
-        </button>
-      </div>
-      <div>
-        <ul className={taskListClass}>{getTaskItems(tasks)}</ul>
-      </div>
-      <div className={resultsGridClass}>
-        <div className={resultsHeaderClass}>Estimate</div>
-        <div>hours</div>
-        <div>days</div>
-        <div>weeks</div>
-        <div>sprints</div>
-        <div>{roundToDecimal(totalEstimate)}</div>
-        <div>{roundToDecimal(totalDays)}</div>
-        <div>{roundToDecimal(totalWeeks)}</div>
-        <div>{roundToDecimal(totalSprints)}</div>
-      </div>
-    </div>
-  );
-};
 
 export const WrappedEstimatorForm = Form.create()(EstimatorForm);
